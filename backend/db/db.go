@@ -9,7 +9,7 @@ import (
 
 // Establish Connection with the Database
 func Connect(connectionString string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", connectionString)
+	db, err := sql.Open("pgx", connectionString)
 
 	if err != nil {
 		return nil, err

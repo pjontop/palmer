@@ -121,3 +121,55 @@ func (s *AuthService) ValidateToken(tokenString string) (jwt.MapClaims, error) {
 	}
 	return nil, ErrInvalidToken
 }
+
+// LoginWithRefresh authenticates a user and returns both access and refresh tokens
+func (s *AuthService) LoginWithRefresh(email, password string, refreshTokenTTL time.Duration) (accessToken string, refreshToken string, err error) {
+	// Get the user from the database
+	user, err := s.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return "", "", ErrInvalidCredentials
+	}
+	// Verify the password
+	if err := VerifyPassword(user.PasswordHash, password); err != nil {
+		return "", "", ErrInvalidCredentials
+	}
+	// Generate an access token
+	accessToken, err = s.generateAccessToken(user)
+	if err != nil {
+		return "", "", err
+	}
+	// Create a refresh token
+	token, err := s.refreshTokenRepo.CreateRefreshToken(user.ID, refreshTokenTTL)
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, token.Token, nil
+}
+
+// RefreshAccessToken creates a new access token using a refresh token
+func (s *AuthService) RefreshAccessToken(refreshTokenString string) (string, error) {
+	// Retrieve the refresh token
+	token, err := s.refreshTokenRepo.GetRefreshToken(refreshTokenString)
+	if err != nil {
+		return "", ErrInvalidToken
+	}
+	// Check if the token is valid
+	if token.Revoked {
+		return "", ErrInvalidToken
+	}
+	// Check if the token has expired
+	if time.Now().After(token.ExpiresAt) {
+		return "", ErrExpiredToken
+	}
+	// Get the user
+	user, err := s.userRepo.GetUserByID(token.UserID)
+	if err != nil {
+		return "", err
+	}
+	// Generate a new access token
+	accessToken, err := s.generateAccessToken(user)
+	if err != nil {
+		return "", err
+	}
+	return accessToken, nil
+}
