@@ -9,6 +9,7 @@ import { Input } from "@workspace/ui/components/input"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "@/hooks/useAuth"
+import posthog from "posthog-js"
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -24,21 +25,42 @@ export default function SignInForm() {
     setError(null)
     try {
       await signIn(email, password)
+      // Identify user and capture sign-in event
+      posthog.identify(email, { email })
+      posthog.capture('user_signed_in', {
+        method: 'email',
+        terms_accepted: agree,
+      })
       router.push('/profile')
     } catch (err: any) {
       setError(err?.message || 'Sign in failed')
+      posthog.capture('user_sign_in_failed', {
+        method: 'email',
+        error_message: err?.message || 'Sign in failed',
+      })
+    }
+  }
+
+  const handleSocialLogin = (provider: 'google' | 'apple') => {
+    posthog.capture('social_login_clicked', { provider })
+  }
+
+  const handleTermsChange = (checked: boolean) => {
+    setAgree(checked)
+    if (checked) {
+      posthog.capture('terms_accepted')
     }
   }
 
   return (
     <form className="w-full" onSubmit={onSubmit}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-        <Button size="sm" variant="outline" className="w-full rounded-2xl px-4 py-2 text-sm flex items-center justify-center gap-2" aria-label="Log in with Google">
+        <Button size="sm" variant="outline" className="w-full rounded-2xl px-4 py-2 text-sm flex items-center justify-center gap-2" aria-label="Log in with Google" onClick={() => handleSocialLogin('google')}>
           <Image src="/login-page/google-brands-solid-full.svg" alt="Google" width={18} height={18} className="-ml-1" />
           <span className="font-medium">Log in with Google</span>
         </Button>
 
-        <Button size="sm" variant="outline" className="w-full rounded-2xl px-4 py-2 text-sm flex items-center justify-center gap-2" aria-label="Log in with Apple">
+        <Button size="sm" variant="outline" className="w-full rounded-2xl px-4 py-2 text-sm flex items-center justify-center gap-2" aria-label="Log in with Apple" onClick={() => handleSocialLogin('apple')}>
           <Image src="/login-page/apple-brands-solid-full.svg" alt="Apple" width={18} height={18} className="-ml-1" />
           <span className="font-medium">Log in with Apple</span>
         </Button>
@@ -88,7 +110,7 @@ export default function SignInForm() {
       </div>
 
       <div className="flex items-center gap-2 mt-4">
-        <Checkbox id="signin-agree" checked={agree} onCheckedChange={(v) => setAgree(Boolean(v))} />
+        <Checkbox id="signin-agree" checked={agree} onCheckedChange={(v) => handleTermsChange(Boolean(v))} />
         <Label htmlFor="signin-agree" className="text-sm text-[var(--color-muted-foreground)]">I agree to the <a href="#" className="underline">Terms & Conditions</a></Label>
       </div>
 
