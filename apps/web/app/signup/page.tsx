@@ -4,9 +4,9 @@ import SignUpForm from "./signup-form"
 
 export default function SignUpPage() {
   return (
-    <main className="min-h-svh flex items-center justify-center bg-[var(--color-background)]">
-      <div className="container mx-auto py-12 px-6 flex flex-col md:flex-row gap-8 items-start md:items-stretch w-full max-w-screen-xl">
-        <div className="w-full max-w-md md:max-w-lg lg:max-w-xl">
+    <main className="min-h-svh flex justify-center bg-[var(--color-background)]">
+      <div className="w-full max-w-screen-2xl mx-auto px-6 py-6 flex flex-col md:flex-row gap-6">
+        <div className="w-full md:w-auto md:flex-1 max-w-2xl flex flex-col justify-center">
           <div className="mb-6">
             <Image src="/placerLogo-WithoutText.svg" alt="Placer logo" width={32} height={32} />
           </div>
@@ -21,7 +21,7 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        <div className="hidden md:block flex-1 max-w-[min(65vw,56rem)] rounded-2xl bg-[var(--color-foreground)] min-h-[60vh]" aria-hidden>
+        <div className="hidden md:block flex-1 rounded-2xl bg-[var(--color-foreground)]" aria-hidden>
         </div>
       </div>
     </main>
