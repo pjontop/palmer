@@ -35,7 +35,7 @@ export default function SignInForm() {
         method: 'email',
         terms_accepted: agree,
       })
-      router.push('/profile')
+      router.push('/home')
     } catch (err: any) {
       setError(err?.message || 'Sign in failed')
       posthog.capture('user_sign_in_failed', {

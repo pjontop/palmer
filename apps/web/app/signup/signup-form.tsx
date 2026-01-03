@@ -35,7 +35,7 @@ export default function SignUpForm() {
         method: 'email',
         terms_accepted: agree,
       })
-      router.push('/profile')
+      router.push('/home')
     } catch (err: any) {
       setError(err?.message || 'Sign up failed')
       posthog.capture('user_sign_up_failed', {
