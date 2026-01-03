@@ -17,7 +17,6 @@ import { CircleAlertIcon } from "lucide-react"
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
-  const [agree, setAgree] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -33,7 +32,6 @@ export default function SignInForm() {
       posthog.identify(email, { email })
       posthog.capture('user_signed_in', {
         method: 'email',
-        terms_accepted: agree,
       })
       router.push('/home')
     } catch (err: any) {
@@ -47,13 +45,6 @@ export default function SignInForm() {
 
   const handleSocialLogin = (provider: 'google' | 'apple') => {
     posthog.capture('social_login_clicked', { provider })
-  }
-
-  const handleTermsChange = (checked: boolean) => {
-    setAgree(checked)
-    if (checked) {
-      posthog.capture('terms_accepted')
-    }
   }
 
   return (
@@ -113,11 +104,6 @@ export default function SignInForm() {
           </button>
         </div>
         <p className="text-xs text-[var(--color-muted-foreground)] mt-2">A minimum of 8 Characters</p>
-      </div>
-
-      <div className="flex items-center gap-2 mt-4">
-        <Checkbox id="signin-agree" checked={agree} onCheckedChange={(v) => handleTermsChange(Boolean(v))} />
-        <Label htmlFor="signin-agree" className="text-sm text-[var(--color-muted-foreground)]">I agree to the <a href="#" className="underline">Terms & Conditions</a></Label>
       </div>
 
       {error && (
