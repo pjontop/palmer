@@ -50,12 +50,12 @@ export default function SignInForm() {
   return (
     <form className="w-full" onSubmit={onSubmit}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-        <Button size="lg" variant="outline" className="w-full rounded-2xl" aria-label="Log in with Google" onClick={() => handleSocialLogin('google')}>
+        <Button size="xl" variant="outline" className="w-full rounded-2xl" aria-label="Log in with Google" onClick={() => handleSocialLogin('google')}>
           <Image src="/login-page/google-brands-solid-full.svg" alt="Google" width={18} height={18} />
           <span className="font-medium">Log in with Google</span>
         </Button>
 
-        <Button size="lg" variant="outline" className="w-full rounded-2xl" aria-label="Log in with Apple" onClick={() => handleSocialLogin('apple')}>
+        <Button size="xl" variant="outline" className="w-full rounded-2xl" aria-label="Log in with Apple" onClick={() => handleSocialLogin('apple')}>
           <Image src="/login-page/apple-brands-solid-full.svg" alt="Apple" width={18} height={18} />
           <span className="font-medium">Log in with Apple</span>
         </Button>
@@ -115,7 +115,7 @@ export default function SignInForm() {
       )}
 
       <div className="mt-6">
-        <Button size="lg" className="w-full rounded-2xl" type="submit" disabled={loading}>
+        <Button size="xl" className="w-full rounded-2xl" type="submit" disabled={loading}>
           {loading && (
             <svg aria-hidden viewBox="0 0 24 24" className="animate-spin" fill="none">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-20" />
